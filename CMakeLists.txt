@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.28)
 
 project(VkToy VERSION 0.0.1
               DESCRIPTION ""
@@ -11,8 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # 3rd party deps
-include(cmake/Conan.cmake)
-run_conan()
+#include(cmake/Conan.cmake)
+#run_conan()
 
 include(cmake/PreventInSourceBuilds.cmake)
 include(cmake/ProjectOptions.cmake)
