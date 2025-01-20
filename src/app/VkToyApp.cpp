@@ -1,4 +1,5 @@
 #define GLFW_INCLUDE_VULKAN
+#include "Logging.hpp"
 #include <GLFW/glfw3.h>
 
 #include <cstdlib>
@@ -76,6 +77,8 @@ class HelloTriangleApplication
   {
     if (!enableValidationLayers)
       return;
+
+    LOG_DEBUG("Vulkan validation layers ENABLED");
 
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
     populateDebugMessengerCreateInfo(createInfo);
@@ -226,7 +229,7 @@ class HelloTriangleApplication
   {
     if (enableValidationLayers)
     {
-      //  DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+      // DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
     vkDestroyInstance(instance, nullptr);
@@ -239,6 +242,10 @@ class HelloTriangleApplication
 
 int main()
 {
+  Utils::InitializeLogger();
+
+  LOG_DEBUG("Launch VkToy app");
+
   HelloTriangleApplication app;
 
   try
