@@ -71,6 +71,7 @@ class HelloTriangleApplication
   void initVulkan()
   {
     createInstance();
+    setupDebugMessenger();
   }
 
   void setupDebugMessenger()
