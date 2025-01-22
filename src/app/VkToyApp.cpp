@@ -58,6 +58,8 @@ class HelloTriangleApplication
   GLFWwindow* window;
   VkInstance instance;
   VkPhysicalDevice physicalDevice;
+  VkDevice device;
+  VkQueue graphicsQueue;
   VkDebugUtilsMessengerEXT debugMessenger;
 
   void initWindow()
@@ -75,6 +77,7 @@ class HelloTriangleApplication
     createInstance();
     setupDebugMessenger();
     pickPhysicalDevice();
+    createLogicalDevice();
   }
 
   void createInstance()
@@ -214,6 +217,38 @@ class HelloTriangleApplication
     return indices;
   }
 
+  void createLogicalDevice()
+  {
+    QueueFamilyIndices indices = findQueuesFamilies(physicalDevice);
+
+    VkDeviceQueueCreateInfo queueCreateInfo {};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueCount = 1;
+
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    VkPhysicalDeviceFeatures deviceFeatures {};
+
+    VkDeviceCreateInfo createInfo {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pQueueCreateInfos = &queueCreateInfo;
+    createInfo.queueCreateInfoCount = 1;
+
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
+    createInfo.enabledExtensionCount = 0;
+
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
+    {
+      std::runtime_error("Failed to create logical device!");
+    }
+
+    // Queues are automatically created along with the logical device
+    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+  }
+
   void printAllAvailableExtensions()
   {
     // All extensions
@@ -306,9 +341,11 @@ class HelloTriangleApplication
 
   void cleanup()
   {
+    vkDestroyDevice(device, nullptr);
+
     if (enableValidationLayers)
     {
-      // DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+      DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
     vkDestroyInstance(instance, nullptr);
