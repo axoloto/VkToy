@@ -74,6 +74,9 @@ class HelloTriangleApplication
   VkDebugUtilsMessengerEXT debugMessenger;
   VkSurfaceKHR surface;
   VkSwapchainKHR swapChain;
+  std::vector<VkImage> swapChainImages;
+  VkFormat swapChainImageFormat;
+  VkExtent2D swapChainExtent;
 
   void initWindow()
   {
@@ -404,6 +407,13 @@ class HelloTriangleApplication
     {
       throw std::runtime_error("Failed to create the swap chain!");
     }
+
+    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+    swapChainImages.resize(imageCount);
+    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+
+    swapChainImageFormat = surfaceFormat.format;
+    swapChainExtent = extent;
   }
 
   VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
