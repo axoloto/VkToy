@@ -7,6 +7,8 @@ DEV_BUILD_DIR="$DEV_DIR/build"
 DEV_INSTALL_DIR="$DEV_DIR/install"
 DEV_PACKAGE=0
 
+GLSLC_DIR="C://VulkanSDK//1.3.239.0//Bin"
+
 if [[ -z "$1" ]] 
 then
     echo "No build specified, using Release by default"
@@ -24,3 +26,5 @@ export DEV_BUILD_DIR
 export DEV_INSTALL_DIR
 export DEV_BUILD_TYPE
 export DEV_PACKAGE
+
+export GLSLC_DIR

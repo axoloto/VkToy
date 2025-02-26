@@ -7,6 +7,7 @@ printf "========================= START $DEV_BUILD_TYPE BUILD ==================
 paths=" - root folder = $DEV_DIR\n"
 paths+=" - build folder = $DEV_BUILD_DIR\n"
 paths+=" - install folder = $DEV_INSTALL_DIR\n"
+paths+=" - glslc folder = $GLSLC_DIR\n"
 printf "%b" "$paths\n"
 
 mkdir -p "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" "$DEV_INSTALL_DIR/$DEV_BUILD_TYPE"
@@ -24,6 +25,13 @@ cmake "$DEV_DIR" \
 cmake --build "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" --config "$DEV_BUILD_TYPE" --target "install"
 
 printf "========================== END CMAKE ============================= \n"
+
+printf "========================== START GLSLC ============================= \n"
+
+"$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/shader.vert" -o vert.spv
+"$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/shader.frag" -o frag.spv
+
+printf "========================== END GLSLC ============================= \n"
 
 cd "$DEV_DIR"
 

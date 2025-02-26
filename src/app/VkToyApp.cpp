@@ -99,6 +99,7 @@ class HelloTriangleApplication
     createLogicalDevice();
     createSwapChain();
     createImageViews();
+    createGraphicsPipeline();
   }
 
   void createInstance()
@@ -495,6 +496,10 @@ class HelloTriangleApplication
         throw std::runtime_error("Failed to create image views!");
       }
     }
+  }
+
+  void createGraphicsPipeline()
+  {
   }
 
   void printAllAvailableExtensions()
