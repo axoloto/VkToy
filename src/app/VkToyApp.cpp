@@ -1,4 +1,3 @@
-#include "Logging.hpp"
 //#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -13,6 +12,9 @@
 #include <set>
 #include <stdexcept>
 #include <vector>
+
+#include "Logging.hpp"
+#include "Utils.hpp"
 
 static constexpr uint32_t WIDTH = 800;
 static constexpr uint32_t HEIGHT = 600;
@@ -500,6 +502,8 @@ class HelloTriangleApplication
 
   void createGraphicsPipeline()
   {
+    auto vertShaderCode = readShaderFile("vert.spv");
+    auto fragShaderCode = readShaderFile("frag.spv");
   }
 
   void printAllAvailableExtensions()
