@@ -3,7 +3,10 @@
 #include <GLFW/glfw3.h>
 //#define GLFW_EXPOSE_NATIVE_WIN32
 
+#include <glm/glm.hpp>
+
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
@@ -33,7 +36,46 @@ static constexpr bool enableValidationLayers = false;
 static constexpr bool enableValidationLayers = true;
 #endif
 
-VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
+struct Vertex
+{
+  glm::vec2 pos;
+  glm::vec3 color;
+
+  static VkVertexInputBindingDescription getBindingDescription()
+  {
+    VkVertexInputBindingDescription bindingDescription {};
+    bindingDescription.binding = 0;
+    bindingDescription.stride = sizeof(Vertex);
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+    return bindingDescription;
+  }
+
+  static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions()
+  {
+    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions {};
+    attributeDescriptions[0].binding = 0;
+    attributeDescriptions[0].location = 0;
+    attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+    attributeDescriptions[0].offset = offsetof(Vertex, pos);
+
+    attributeDescriptions[1].binding = 0;
+    attributeDescriptions[1].location = 1;
+    attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+    attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+    return attributeDescriptions;
+  }
+};
+
+const std::vector<Vertex> vertices = {
+  { { 0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+  { { 0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f } },
+  { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } }
+};
+
+VkResult
+CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
 {
   auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
   if (func != nullptr)
@@ -633,12 +675,16 @@ class HelloTriangleApplication
     VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
     // vertex buffer
+
+    auto bindingDescription = Vertex::getBindingDescription();
+    auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertexInputInfo {};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr;
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
     // input assembly
     VkPipelineInputAssemblyStateCreateInfo inputAssembly {};
