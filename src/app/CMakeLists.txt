@@ -8,13 +8,15 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 
 target_compile_definitions(VkToyApp PRIVATE SHADER_DIR=${SHADER_DIR})
+target_compile_definitions(VkToyApp PRIVATE TEXTURE_DIR=${TEXTURE_DIR})
 
 find_package(glfw3 REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(glm REQUIRED)
+find_package(stb REQUIRED)
 #add_subdirectory(imgui_backend)
 
-target_link_libraries(VkToyApp PRIVATE Vulkan::Vulkan glfw spdlog::spdlog glm::glm)
+target_link_libraries(VkToyApp PRIVATE Vulkan::Vulkan glfw spdlog::spdlog glm::glm stb::stb)
 
 install(TARGETS VkToyApp RUNTIME DESTINATION bin)

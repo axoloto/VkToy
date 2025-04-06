@@ -28,3 +28,8 @@ std::vector<char> readFile(const std::string& fileName)
 
   return buffer;
 }
+
+std::string getTexturePath(const std::string& textureName)
+{
+  return std::string(TOSTRING(TEXTURE_DIR)) + textureName;
+}

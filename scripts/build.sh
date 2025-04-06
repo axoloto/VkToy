@@ -11,6 +11,7 @@ paths+=" - glslc folder = $GLSLC_DIR\n"
 printf "%b" "$paths\n"
 
 SHADER_DIR="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE/shaders/"
+TEXTURE_DIR="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE/textures/"
 
 mkdir -p "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" "$DEV_INSTALL_DIR/$DEV_BUILD_TYPE"
 
@@ -23,7 +24,8 @@ cmake "$DEV_DIR" \
       -DCMAKE_BUILD_TYPE=$DEV_BUILD_TYPE \
       -DCMAKE_BUILD_DIR="$DEV_BUILD_DIR/$DEV_BUILD_TYPE" \
       -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$DEV_DIR/cmake/conan_provider.cmake" \
-      -DSHADER_DIR=$SHADER_DIR
+      -DSHADER_DIR=$SHADER_DIR \
+      -DTEXTURE_DIR=$TEXTURE_DIR
 
 cmake --build "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" --config "$DEV_BUILD_TYPE" --target "install"
 
@@ -37,6 +39,14 @@ mkdir -p $SHADER_DIR
 "$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/shader.frag" -o "$SHADER_DIR/frag.spv"
 
 printf "========================== END GLSLC ============================= \n"
+
+printf "========================== START TEXTURE HANDLING ============================= \n"
+
+mkdir -p $TEXTURE_DIR
+
+cp "$DEV_DIR/src/textures/texture.jpg" "$TEXTURE_DIR/texture.jpg"
+
+printf "========================== END TEXTURE HANDLING ============================= \n"
 
 cd "$DEV_DIR"
 

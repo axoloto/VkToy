@@ -7,6 +7,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -196,6 +199,7 @@ class HelloTriangleApplication
     createGraphicsPipeline();
     createFramebuffers();
     createCommandPool();
+    createTextureImage();
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -897,6 +901,18 @@ class HelloTriangleApplication
     if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
     {
       throw std::runtime_error("Failed to create the command pool!");
+    }
+  }
+
+  void createTextureImage()
+  {
+    int texWidth, texHeight, texChannels;
+    stbi_uc* pixels = stbi_load(getTexturePath("texture.jpg").data(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+    if (!pixels)
+    {
+      throw std::runtime_error("Failed to load texture image!");
     }
   }
 
