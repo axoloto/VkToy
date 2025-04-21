@@ -16,7 +16,7 @@ Checks: "*,
 "
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
-FormatStyle:     none
+FormatStyle:     file
 
 CheckOptions:
   - key: readability-identifier-length.IgnoredVariableNames

@@ -1,11 +1,12 @@
 # Build directories and binary files
 build/
-out/
+install/
 cmake-build-*/
 conan-cache/
 
-# User spesific settings
+# User specific settings
 CMakeUserPresets.json
+CMakeCache.txt
 
 # IDE files
 .vs/
@@ -32,3 +33,4 @@ $RECYCLE.BIN/
 .TemporaryItems
 ehthumbs.db
 Thumbs.db
+imgui.ini
