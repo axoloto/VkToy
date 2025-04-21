@@ -12,6 +12,7 @@ printf "%b" "$paths\n"
 
 SHADER_DIR="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE/shaders/"
 TEXTURE_DIR="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE/textures/"
+MODEL_DIR="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE/models/"
 
 mkdir -p "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" "$DEV_INSTALL_DIR/$DEV_BUILD_TYPE"
 
@@ -25,7 +26,8 @@ cmake "$DEV_DIR" \
       -DCMAKE_BUILD_DIR="$DEV_BUILD_DIR/$DEV_BUILD_TYPE" \
       -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$DEV_DIR/cmake/conan_provider.cmake" \
       -DSHADER_DIR=$SHADER_DIR \
-      -DTEXTURE_DIR=$TEXTURE_DIR
+      -DTEXTURE_DIR=$TEXTURE_DIR \
+      -DMODEL_DIR=$MODEL_DIR
 
 cmake --build "$DEV_BUILD_DIR/$DEV_BUILD_TYPE" --config "$DEV_BUILD_TYPE" --target "install"
 
@@ -44,9 +46,17 @@ printf "========================== START TEXTURE HANDLING ======================
 
 mkdir -p $TEXTURE_DIR
 
-cp "$DEV_DIR/src/textures/texture.jpg" "$TEXTURE_DIR/texture.jpg"
+cp "$DEV_DIR/src/textures/viking_room.png" "$TEXTURE_DIR/viking_room.png"
 
 printf "========================== END TEXTURE HANDLING ============================= \n"
+
+printf "========================== START MODEL HANDLING ============================= \n"
+
+mkdir -p $MODEL_DIR
+
+cp "$DEV_DIR/src/models/viking_room.obj" "$MODEL_DIR/viking_room.obj"
+
+printf "========================== END MODEL HANDLING ============================= \n"
 
 cd "$DEV_DIR"
 

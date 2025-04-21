@@ -33,3 +33,8 @@ std::string getTexturePath(const std::string& textureName)
 {
   return std::string(TOSTRING(TEXTURE_DIR)) + textureName;
 }
+
+std::string getModelPath(const std::string& modelName)
+{
+  return std::string(TOSTRING(MODEL_DIR)) + modelName;
+}
