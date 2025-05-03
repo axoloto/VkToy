@@ -33,6 +33,8 @@
 
 #include "Logging.hpp"
 #include "Utils.hpp"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
 
 static constexpr uint32_t WIDTH = 1920;
 static constexpr uint32_t HEIGHT = 1080;
@@ -136,6 +138,15 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
   }
 }
 
+static void check_vk_result(VkResult err)
+{
+  if (err == VK_SUCCESS)
+    return;
+  fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+  if (err < 0)
+    abort();
+}
+
 class HelloTriangleApplication
 {
   public:
@@ -153,6 +164,7 @@ class HelloTriangleApplication
   VkInstance instance;
   VkPhysicalDevice physicalDevice;
   VkDevice device;
+  uint32_t graphicsQueueFamily;
   VkQueue graphicsQueue;
   VkQueue presentQueue;
   VkDebugUtilsMessengerEXT debugMessenger;
@@ -163,6 +175,8 @@ class HelloTriangleApplication
   VkExtent2D swapChainExtent;
   // An image view is needed to start using image as a texture
   std::vector<VkImageView> swapChainImageViews;
+
+  uint32_t minImageCount;
 
   VkRenderPass renderPass;
   VkDescriptorSetLayout descriptorSetLayout;
@@ -259,6 +273,25 @@ class HelloTriangleApplication
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForVulkan(window, true);
+    ImGui_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance = instance;
+    init_info.PhysicalDevice = physicalDevice;
+    init_info.Device = device;
+    init_info.QueueFamily = graphicsQueueFamily;
+    init_info.Queue = graphicsQueue;
+    init_info.PipelineCache = nullptr;
+    init_info.DescriptorPool = descriptorPool;
+    init_info.RenderPass = renderPass;
+    init_info.Subpass = 0;
+    init_info.MinImageCount = minImageCount;
+    init_info.ImageCount = swapChainImages.size();
+    init_info.MSAASamples = msaaSamples;
+    init_info.Allocator = nullptr;
+    init_info.CheckVkResultFn = check_vk_result;
+    ImGui_ImplVulkan_Init(&init_info);
   }
 
   void createInstance()
@@ -543,6 +576,8 @@ class HelloTriangleApplication
     // Queues are automatically created along with the logical device
     vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+
+    graphicsQueueFamily = indices.graphicsFamily.value();
   }
 
   void createSwapChain()
@@ -559,10 +594,12 @@ class HelloTriangleApplication
       imageCount = swapChainSupport.capabilities.maxImageCount;
     }
 
+    minImageCount = imageCount;
+
     VkSwapchainCreateInfoKHR createInfo {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface;
-    createInfo.minImageCount = imageCount;
+    createInfo.minImageCount = minImageCount;
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
