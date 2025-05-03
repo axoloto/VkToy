@@ -12,13 +12,15 @@ target_compile_definitions(VkToyApp PRIVATE TEXTURE_DIR=${TEXTURE_DIR})
 target_compile_definitions(VkToyApp PRIVATE MODEL_DIR=${MODEL_DIR})
 
 find_package(glfw3 REQUIRED)
-find_package(Vulkan REQUIRED)
+find_package(VulkanLoader REQUIRED)
+find_package(VulkanHeaders REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(glm REQUIRED)
 find_package(stb REQUIRED)
 find_package(tinyobjloader REQUIRED)
-#add_subdirectory(imgui_backend)
 
-target_link_libraries(VkToyApp PRIVATE Vulkan::Vulkan glfw spdlog::spdlog glm::glm stb::stb tinyobjloader::tinyobjloader)
+add_subdirectory(imgui_backend)
+
+target_link_libraries(VkToyApp PRIVATE imgui_backend Vulkan::Loader vulkan-headers::vulkan-headers glfw spdlog::spdlog glm::glm stb::stb tinyobjloader::tinyobjloader)
 
 install(TARGETS VkToyApp RUNTIME DESTINATION bin)

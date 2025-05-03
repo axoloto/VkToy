@@ -16,6 +16,8 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
+#include <imgui.h>
+
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -141,6 +143,7 @@ class HelloTriangleApplication
   {
     initWindow();
     initVulkan();
+    initDearImgui();
     mainLoop();
     cleanup();
   }
@@ -249,6 +252,13 @@ class HelloTriangleApplication
     createDescriptorSets();
     createCommandBuffers();
     createSyncObjects();
+  }
+
+  void initDearImgui()
+  {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
   }
 
   void createInstance()
