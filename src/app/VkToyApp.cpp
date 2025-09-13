@@ -276,22 +276,22 @@ class HelloTriangleApplication
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForVulkan(window, true);
-    ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = instance;
-    init_info.PhysicalDevice = physicalDevice;
-    init_info.Device = device;
-    init_info.QueueFamily = graphicsQueueFamily;
-    init_info.Queue = graphicsQueue;
-    init_info.PipelineCache = nullptr;
-    init_info.DescriptorPool = descriptorPool;
-    init_info.RenderPass = renderPass;
-    init_info.Subpass = 0;
-    init_info.MinImageCount = minImageCount;
-    init_info.ImageCount = swapChainImages.size();
-    init_info.MSAASamples = msaaSamples;
-    init_info.Allocator = nullptr;
-    init_info.CheckVkResultFn = check_vk_result;
-    ImGui_ImplVulkan_Init(&init_info);
+    ImGui_ImplVulkan_InitInfo initInfo = {};
+    initInfo.Instance = instance;
+    initInfo.PhysicalDevice = physicalDevice;
+    initInfo.Device = device;
+    initInfo.QueueFamily = graphicsQueueFamily;
+    initInfo.Queue = graphicsQueue;
+    initInfo.PipelineCache = nullptr;
+    initInfo.DescriptorPoolSize = 2; // DearImgui will manage its own descriptor pool
+    initInfo.RenderPass = renderPass;
+    initInfo.Subpass = 0;
+    initInfo.MinImageCount = minImageCount;
+    initInfo.ImageCount = swapChainImages.size();
+    initInfo.MSAASamples = msaaSamples;
+    initInfo.Allocator = nullptr;
+    initInfo.CheckVkResultFn = check_vk_result;
+    ImGui_ImplVulkan_Init(&initInfo);
   }
 
   void createInstance()
@@ -1801,6 +1801,9 @@ class HelloTriangleApplication
 
     vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
+    ImDrawData* drawData = ImGui::GetDrawData();
+    ImGui_ImplVulkan_RenderDrawData(drawData, commandBuffer);
+
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
@@ -1918,10 +1921,33 @@ class HelloTriangleApplication
     while (!glfwWindowShouldClose(window))
     {
       glfwPollEvents();
+
+      renderDearImGui();
+
       drawFrame();
     }
 
     vkDeviceWaitIdle(device);
+  }
+
+  void renderDearImGui()
+  {
+    // Start the Dear ImGui frame and render UI items in DearImGui
+    // Note that real drawing is embedded with ours and will happen later
+    // Indeed, we add UI draw calls to our command buffer in recordCommandBuffer()
+    // and this command buffer is submitted in drawFrame()
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    {
+      ImGui::Begin("Welcome to VkToy!");
+      ImGui::Text("This is a small application made for learning purpose.");
+      ImGui::Text("It follows the awesome Vulkan tutorial on https://docs.vulkan.org.");
+      ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+      ImGui::End();
+    }
+
+    ImGui::Render();
   }
 
   void drawFrame()
@@ -2013,6 +2039,10 @@ class HelloTriangleApplication
 
   void cleanup()
   {
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     cleanupSwapChain();
 
     vkDestroySampler(device, textureSampler, nullptr);
