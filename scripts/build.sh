@@ -23,7 +23,6 @@ printf "========================= START CMAKE ============================ \n"
 cmake "$DEV_DIR" \
       -DCMAKE_INSTALL_PREFIX="$DEV_INSTALL_DIR/$DEV_BUILD_TYPE" \
       -DCMAKE_BUILD_TYPE=$DEV_BUILD_TYPE \
-      -DCMAKE_BUILD_DIR="$DEV_BUILD_DIR/$DEV_BUILD_TYPE" \
       -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="$DEV_DIR/cmake/conan_provider.cmake" \
       -DSHADER_DIR=$SHADER_DIR \
       -DTEXTURE_DIR=$TEXTURE_DIR \
@@ -39,6 +38,9 @@ mkdir -p $SHADER_DIR
 
 "$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/shader.vert" -o "$SHADER_DIR/vert.spv"
 "$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/shader.frag" -o "$SHADER_DIR/frag.spv"
+"$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/particle.comp" -o "$SHADER_DIR/partCompute.spv"
+"$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/particle.vert" -o "$SHADER_DIR/partVert.spv"
+"$GLSLC_DIR/glslc" "$DEV_DIR/src/shaders/particle.frag" -o "$SHADER_DIR/partFrag.spv"
 
 printf "========================== END GLSLC ============================= \n"
 
